@@ -12,6 +12,8 @@ class App {
         this._setupControls();
         this._setupUI();
         this._setupEvents();
+
+        this._clickedDonut = false;
     }
 
     _setupThreeJs() {
@@ -58,22 +60,22 @@ class App {
     _setupModel() {
         const donut1 = new Donut({
             name: 'donut1', x: 2, y: 2, z: -2,
-            url: 'https://www.youtube.com/embed/kNDbaYEp0tU',
+            path: '/data/Squirm Worm.mp3',
             container: this._scene
         });
         const donut2 = new Donut({
             name: 'donut2', x: -2, y: 2, z: -2,
-            url: 'https://www.youtube.com/embed/kNDbaYEp0tU',
+            path: '/data/Squirm Worm.mp3',
             container: this._scene
         });
         const donut3 = new Donut({
             name: 'donut3', x: 2, y: 2, z: 2,
-            url: 'https://www.youtube.com/embed/kNDbaYEp0tU',
+            path: '/data/Squirm Worm.mp3',
             container: this._scene
         });
         const donut4 = new Donut({
             name: 'donut4', x: -2, y: 2, z: 2,
-            url: 'https://www.youtube.com/embed/kNDbaYEp0tU',
+            path: '/data/Squirm Worm.mp3',
             container: this._scene
         });
 
@@ -112,13 +114,17 @@ class App {
 
         // 도넛 호버 이벤트
         this._divContainer.addEventListener('mousemove', e => {
-            this.checkRaycaster(e)
-            this.hoverDonut();
+            if (!this._clickedDonut) {
+                this.checkRaycaster(e)
+                this.hoverDonut();
+            }
         });
 
         // 도넛 클릭 이벤트
         this._divContainer.addEventListener('click', e => {
             if (preventDragClick.mouseMoved) return; // 드래그 방지
+            if (this._clickedDonut) return; // 중복클릭 방지
+            this._clickedDonut = true;
             this.checkRaycaster(e)
             this.clickDonut();
         });
@@ -154,11 +160,13 @@ class App {
 
     clickDonut() {
         if (this._lastObject) this.turnOff(this._lastObject);
-        // Three.js 이벤트
+
         const intersects = this._raycaster.intersectObjects(this._scene.children);
 
         for (const item of intersects) {
             if (item.object.name.indexOf('donut')) break;
+
+            this.turnOff(item.object);
 
             gsap.to(
                 item.object.rotation,
@@ -169,13 +177,11 @@ class App {
                 }
             );
 
-            this.openInfomation(item.object);
-
             setTimeout(() => {
                 gsap.to(
                     this._camera.position,
                     {
-                        duration: 0.8,
+                        duration: 1,
                         x: item.object.position.x,
                         y: item.object.position.y + 2,
                         z: item.object.position.z,
@@ -185,25 +191,44 @@ class App {
                 gsap.to(
                     this._orbitControls.target,
                     {
-                        duration: 0.8,
+                        duration: 1,
                         x: item.object.position.x,
                         z: item.object.position.z,
                     }
                 );
-            }, 700)
+
+            }, 1000)
+
+            setTimeout(() => {
+                this.openInformation(item.object);
+                item.object.rotation.y = Math.PI;
+            }, 1500)
             break;
         }
     }
 
-    openInfomation(mesh) {
-        this._videoContainer.innerHTML += `<iframe width="560" height="315" src="${mesh.url}" title="YouTube video player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
-        allowfullscreen></iframe>`;
+    openInformation(mesh) {
+        this.musicPlay(mesh);
+        this._songInformation = document.querySelector('#song-information');
+
+        this._songInformation.classList.remove('hide')
+    }
+
+    musicPlay(mesh) {
+        const audioLoader = new THREE.AudioLoader();
+
+        audioLoader.load(mesh.path, (buffer) => {
+            const listener = new THREE.AudioListener();
+            this._audio = new THREE.PositionalAudio(listener);
+            this._audio.setBuffer(buffer)
+            this._audio.offset = 0.5; // 음원의 처음 빈소리 1초 지우기
+            if (!this._audio.isPlaying) this._audio.play();
+        })
     }
 
     closeInformation() {
-        this._videoContainer.innerHTML = ``;
+        this._songInformation.classList.add('hide');
+        if (this._audio.isPlaying) this._audio.stop();
 
         gsap.to(
             this._camera.position,
@@ -223,14 +248,18 @@ class App {
                 z: 0
             }
         );
+
+        setTimeout(() => {
+            this._clickedDonut = false;
+        }, 1000);
     }
 
     turnOn(donut) {
         gsap.to(
             donut.rotation,
             {
-                duration: 1,
-                x: Math.PI / 1.5
+                duration: 0.8,
+                x: Math.PI / 1.4
             }
         );
     }
@@ -239,7 +268,7 @@ class App {
         gsap.to(
             donut.rotation,
             {
-                duration: 1,
+                duration: 0.8,
                 x: Math.PI / 2
             }
         );
