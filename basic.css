@@ -1,10 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap");
+
+:root {
+  --pointColor: #fecf00;
+}
+
 * {
   outline: none;
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   overflow: hidden;
+  font-family: "Righteous", cursive;
+  text-transform: uppercase;
+  color: var(--pointColor);
+}
+
+nav {
+  position: absolute;
+  display: flex;
+  top: 0;
+  width: 100%;
+  justify-content: center;
+  z-index: 1;
 }
 
 #webgl-container {
@@ -21,14 +42,67 @@ body {
 
 #song-information {
   position: absolute;
-  width: 100%;
-  height: 100vh;
-  /* background: #000; */
-  pointer-events: none;
-  z-index: 10;
+  bottom: 30px;
+  right: 30px;
+  z-index: 3;
 }
 
-#song-information button {
+#song-information .line {
+  display: flex;
+  justify-content: space-between;
+}
+
+#song-information .information div {
+  margin: 10px 0;
+}
+
+#trackDetial {
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 2;
+}
+#trackDetial .backBtn {
+  position: absolute;
+  font-family: "Righteous", cursive;
+  border: none;
+  background: #000;
+  color: var(--pointColor);
+  padding: 5px 10px;
+  cursor: pointer;
   pointer-events: all;
+}
+#trackDetial img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  animation: rotationDP 7s linear infinite;
+}
+#trackDetial .trackName {
+  position: absolute;
+  font-size: 5rem;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#trackDetial .pauseBtn {
+  position: absolute;
+  font-size: 1.5rem;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes rotationDP {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }

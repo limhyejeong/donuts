@@ -36,7 +36,7 @@ class App {
             75,
             window.innerWidth / window.innerHeight,
             0.1,
-            100
+            1000
         );
 
         camera.position.set(0, 7, 5);
@@ -44,45 +44,55 @@ class App {
     }
 
     _setupLight() {
-        const defaultLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        defaultLight.position.set(0, 10, 0);
+        const defaultLight = new THREE.DirectionalLight(0x111111, 1);
+        defaultLight.position.set(0, 5, 0);
         defaultLight.castShadow = true;
-        defaultLight.shadow.mapSize.width = 10;
-        defaultLight.shadow.mapSize.height = 10;
+        defaultLight.shadow.mapSize.set(50, 50);
 
-        const pinkLight = new THREE.PointLight(0x673ab7, 0.4);
-        pinkLight.position.set(20, 30, 0);
-        // pinkLight.castShadow = true;
+        const directionalLight = new THREE.PointLight(0x000000, 0.5, 25);
+        directionalLight.position.set(0, 20, -10);
 
-        this._scene.add(defaultLight, pinkLight)
+        this._pinkLight = new THREE.PointLight(0xffeb3b, 1, 80);
+        this._pinkLight.position.set(15, 5, 10);
+        // this._pinkLight.castShadow = true;
+
+        this._scene.add(defaultLight, directionalLight, this._pinkLight)
     }
 
     _setupModel() {
         const donut1 = new Donut({
-            name: 'donut1', x: 2, y: 2, z: -2,
+            name: 'donut1', x: 2, y: 1, z: -2,
             path: '/data/Squirm Worm.mp3',
+            track: 'On The Rocks',
+            num: 1, genre: 'Jazz/Blues',
             container: this._scene
         });
         const donut2 = new Donut({
-            name: 'donut2', x: -2, y: 2, z: -2,
+            name: 'donut2', x: -2, y: 1, z: -2,
             path: '/data/Squirm Worm.mp3',
+            track: 'On The Rocks',
+            num: 1, genre: 'Jazz/Blues',
             container: this._scene
         });
         const donut3 = new Donut({
-            name: 'donut3', x: 2, y: 2, z: 2,
+            name: 'donut3', x: 2, y: 1, z: 2,
             path: '/data/Squirm Worm.mp3',
+            track: 'On The Rocks',
+            num: 1, genre: 'Jazz/Blues',
             container: this._scene
         });
         const donut4 = new Donut({
-            name: 'donut4', x: -2, y: 2, z: 2,
+            name: 'donut4', x: -2, y: 1, z: 2,
             path: '/data/Squirm Worm.mp3',
+            track: 'On The Rocks',
+            num: 1, genre: 'Jazz/Blues',
             container: this._scene
         });
 
         this._donuts = [donut1, donut2];
 
         // 바닥
-        const floor = new THREE.Mesh(new THREE.PlaneGeometry(500, 500),
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(100, 100),
             new THREE.MeshStandardMaterial({ color: 0xffffff }));
         floor.name = 'floor';
         floor.receiveShadow = true;
@@ -96,12 +106,15 @@ class App {
     }
 
     _setupUI() {
-        const backBtn = document.querySelector('.backBtn')
-        backBtn.addEventListener('click', () => {
-            this.closeInformation();
-        })
+        this._songInformation = document.querySelector('#song-information');
+        this._trackInformation = this._songInformation.querySelector('.information')
 
-        this._videoContainer = document.querySelector('#video-container');
+        this._trackDetial = document.querySelector('#trackDetial');
+        const backBtn = this._trackDetial.querySelector('.backBtn')
+
+        backBtn.addEventListener('click', () => {
+            this.closeDetail();
+        })
     }
 
     _setupEvents() {
@@ -124,7 +137,6 @@ class App {
         this._divContainer.addEventListener('click', e => {
             if (preventDragClick.mouseMoved) return; // 드래그 방지
             if (this._clickedDonut) return; // 중복클릭 방지
-            this._clickedDonut = true;
             this.checkRaycaster(e)
             this.clickDonut();
         });
@@ -150,9 +162,13 @@ class App {
 
             // 마우스가 도넛 위에 올라갈 경우
             if (item.object.name.startsWith('donut')) {
+                document.body.style.cursor = 'pointer';
                 this._newObject = item.object;
                 this.turnOn(item.object)
+                this.setInformation(item.object);
                 this._lastObject = this._newObject;
+            } else {
+                document.body.style.cursor = 'auto'
             }
             break;
         }
@@ -160,13 +176,15 @@ class App {
 
     clickDonut() {
         if (this._lastObject) this.turnOff(this._lastObject);
+        document.body.style.cursor = 'auto'
 
         const intersects = this._raycaster.intersectObjects(this._scene.children);
 
         for (const item of intersects) {
             if (item.object.name.indexOf('donut')) break;
-
             this.turnOff(item.object);
+            this.setInformation(item.object)
+            this._clickedDonut = true;
 
             gsap.to(
                 item.object.rotation,
@@ -183,7 +201,7 @@ class App {
                     {
                         duration: 1,
                         x: item.object.position.x,
-                        y: item.object.position.y + 2,
+                        y: item.object.position.y + 3,
                         z: item.object.position.z,
                     }
                 );
@@ -197,21 +215,41 @@ class App {
                     }
                 );
 
+                gsap.to(
+                    this._pinkLight.position,
+                    {
+                        duration: 1,
+                        ease: Power3,
+                        x: -this._pinkLight.position.x,
+                        z: -this._pinkLight.position.z
+                    }
+                );
             }, 1000)
 
             setTimeout(() => {
-                this.openInformation(item.object);
+                this.openDetail(item.object);
                 item.object.rotation.y = Math.PI;
-            }, 1500)
+            }, 2000)
             break;
         }
     }
 
-    openInformation(mesh) {
-        this.musicPlay(mesh);
-        this._songInformation = document.querySelector('#song-information');
+    setInformation(mesh) {
+        this._trackInformation.innerHTML = `
+        <div>Track: ${mesh.track}</div>
+        <div>No: ${mesh.num}/31</div>
+        <div>Genre: ${mesh.genre}</div>`;
+    }
+    outInformation() {
+        this._trackInformation.innerHTML = `
+        <div>Track: No track selected</div>
+        <div>No: 00/31</div>
+        <div>Genre: No track selected</div>`;
+    }
 
-        this._songInformation.classList.remove('hide')
+    openDetail(mesh) {
+        this.musicPlay(mesh);
+        this._trackDetial.classList.remove('hide')
     }
 
     musicPlay(mesh) {
@@ -220,15 +258,14 @@ class App {
         audioLoader.load(mesh.path, (buffer) => {
             const listener = new THREE.AudioListener();
             this._audio = new THREE.PositionalAudio(listener);
-            this._audio.setBuffer(buffer)
-            this._audio.offset = 0.5; // 음원의 처음 빈소리 1초 지우기
+            this._audio.setBuffer(buffer);
             if (!this._audio.isPlaying) this._audio.play();
         })
     }
 
-    closeInformation() {
-        this._songInformation.classList.add('hide');
+    closeDetail() {
         if (this._audio.isPlaying) this._audio.stop();
+        this._trackDetial.classList.add('hide')
 
         gsap.to(
             this._camera.position,
@@ -249,8 +286,19 @@ class App {
             }
         );
 
+        gsap.to(
+            this._pinkLight.position,
+            {
+                duration: 1,
+                ease: Power3,
+                x: -this._pinkLight.position.x,
+                z: -this._pinkLight.position.z
+            }
+        );
+
         setTimeout(() => {
             this._clickedDonut = false;
+            this.outInformation()
         }, 1000);
     }
 
@@ -262,6 +310,7 @@ class App {
                 x: Math.PI / 1.4
             }
         );
+
     }
 
     turnOff(donut) {
@@ -272,6 +321,7 @@ class App {
                 x: Math.PI / 2
             }
         );
+        this.outInformation()
     }
 
     update() {
