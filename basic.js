@@ -14,6 +14,8 @@ class App {
         this._setupEvents();
 
         this._clickedDonut = false;
+        this._audioLoader = new THREE.AudioLoader();
+        this._imageLoader = new THREE.ImageLoader();
     }
 
     _setupThreeJs() {
@@ -23,7 +25,8 @@ class App {
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        // renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.type = THREE.PCFShadowMap;
         divContainer.appendChild(renderer.domElement);
         this._renderer = renderer;
 
@@ -35,7 +38,7 @@ class App {
         const camera = new THREE.PerspectiveCamera(
             75,
             window.innerWidth / window.innerHeight,
-            0.1,
+            1,
             1000
         );
 
@@ -47,16 +50,19 @@ class App {
         const defaultLight = new THREE.DirectionalLight(0x111111, 1);
         defaultLight.position.set(0, 5, 0);
         defaultLight.castShadow = true;
-        defaultLight.shadow.mapSize.set(50, 50);
+        defaultLight.shadow.mapSize.set(1024, 1024);
+        defaultLight.shadow.radius = 10;
 
         const directionalLight = new THREE.PointLight(0x000000, 0.5, 25);
         directionalLight.position.set(0, 20, -10);
 
-        this._pinkLight = new THREE.PointLight(0xffeb3b, 1, 80);
+        this._pinkLight = new THREE.PointLight(0xe9cc83, 1, 80);
         this._pinkLight.position.set(15, 5, 10);
-        // this._pinkLight.castShadow = true;
 
-        this._scene.add(defaultLight, directionalLight, this._pinkLight)
+        this._spotLight = new THREE.PointLight(0xffeb3b, 0);
+        this._spotLight.position.set(-2, 0.75, -2);
+
+        this._scene.add(defaultLight, directionalLight, this._pinkLight, this._spotLight)
     }
 
     _setupModel() {
@@ -103,6 +109,12 @@ class App {
 
     _setupControls() {
         this._orbitControls = new OrbitControls(this._camera, this._divContainer);
+        this._orbitControls.minDistance = 7;
+        this._orbitControls.maxDistance = 7;
+        this._orbitControls.minPolarAngle = Math.PI / 5;
+        this._orbitControls.maxPolarAngle = Math.PI / 5;
+        this._orbitControls.minAzimuthAngle = Math.PI * 2;
+        this._orbitControls.maxAzimuthAngle = Math.PI * 2;
     }
 
     _setupUI() {
@@ -111,9 +123,24 @@ class App {
 
         this._trackDetial = document.querySelector('#trackDetial');
         const backBtn = this._trackDetial.querySelector('.backBtn')
+        const pauseBtn = this._trackDetial.querySelector('.pauseBtn')
+        const LPImg = this._trackDetial.querySelector('.LPImg')
+        LPImg.style.animationPlayState = 'running'
 
         backBtn.addEventListener('click', () => {
             this.closeDetail();
+        })
+        pauseBtn.addEventListener('click', () => {
+            if (this._audio.isPlaying) {
+                this._audio.pause();
+                pauseBtn.innerHTML = `PLAY <img src="./img/play.png" alt="play">`
+                LPImg.style.animationPlayState = 'paused'
+            } else {
+                this._audio.play();
+                pauseBtn.innerHTML = `PAUSE <img src="./img/pause.png" alt="pause">`;
+                LPImg.style.animationPlayState = 'running'
+            }
+
         })
     }
 
@@ -144,7 +171,6 @@ class App {
         this._clock = new THREE.Clock();
         requestAnimationFrame(this.render.bind(this));
     }
-
 
     checkRaycaster(e) {
         this._mouse.x = e.clientX / this._divContainer.clientWidth * 2 - 1;
@@ -253,9 +279,7 @@ class App {
     }
 
     musicPlay(mesh) {
-        const audioLoader = new THREE.AudioLoader();
-
-        audioLoader.load(mesh.path, (buffer) => {
+        this._audioLoader.load(mesh.path, (buffer) => {
             const listener = new THREE.AudioListener();
             this._audio = new THREE.PositionalAudio(listener);
             this._audio.setBuffer(buffer);
@@ -276,7 +300,6 @@ class App {
                 z: 5
             }
         );
-
         gsap.to(
             this._orbitControls.target,
             {
@@ -285,7 +308,6 @@ class App {
                 z: 0
             }
         );
-
         gsap.to(
             this._pinkLight.position,
             {
@@ -310,7 +332,21 @@ class App {
                 x: Math.PI / 1.4
             }
         );
-
+        gsap.to(
+            this._spotLight.position,
+            {
+                duration: 0.3,
+                x: donut.position.x,
+                z: donut.position.z,
+            }
+        );
+        gsap.to(
+            this._spotLight,
+            {
+                duration: 0.5,
+                intensity: 0.7
+            }
+        );
     }
 
     turnOff(donut) {
@@ -319,6 +355,13 @@ class App {
             {
                 duration: 0.8,
                 x: Math.PI / 2
+            }
+        );
+        gsap.to(
+            this._spotLight,
+            {
+                duration: 0.5,
+                intensity: 0
             }
         );
         this.outInformation()

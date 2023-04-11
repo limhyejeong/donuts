@@ -66,6 +66,8 @@ nav {
 }
 #trackDetial .backBtn {
   position: absolute;
+  top: 100px;
+  left: 100px;
   font-family: "Righteous", cursive;
   border: none;
   background: #000;
@@ -74,7 +76,11 @@ nav {
   cursor: pointer;
   pointer-events: all;
 }
-#trackDetial img {
+.backBtn img {
+  width: 6px;
+  transform: rotate(180deg);
+}
+#trackDetial .LPImg {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -89,13 +95,16 @@ nav {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
 #trackDetial .pauseBtn {
   position: absolute;
   font-size: 1.5rem;
   top: 70%;
   left: 50%;
   transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+#trackDetial .pauseBtn img {
+  width: 12px;
 }
 
 @keyframes rotationDP {
