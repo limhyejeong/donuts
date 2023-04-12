@@ -26,9 +26,9 @@ nav {
   width: 100%;
   justify-content: center;
   z-index: 1;
-  font-size: 2rem;
 }
 .logo {
+  font-size: 2rem;
 }
 
 #webgl-container {
@@ -97,6 +97,9 @@ nav {
   top: 25%;
   left: 50%;
   transform: translate(-50%, -50%);
+  text-align: center;
+  line-height: 4.5rem;
+  width: 800px;
 }
 #trackDetial .pauseBtn {
   position: absolute;

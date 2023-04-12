@@ -162,25 +162,32 @@ class App {
 
         this._trackDetial = document.querySelector('#trackDetial');
         const backBtn = this._trackDetial.querySelector('.backBtn')
-        const pauseBtn = this._trackDetial.querySelector('.pauseBtn')
-        const LPImg = this._trackDetial.querySelector('.LPImg')
-        LPImg.style.animationPlayState = 'running'
+        this._pauseBtn = this._trackDetial.querySelector('.pauseBtn')
+        this._LPImg = this._trackDetial.querySelector('.LPImg')
+        this._trackName = this._trackDetial.querySelector('.trackName')
+        this._LPImg.style.animationPlayState = 'running'
 
         backBtn.addEventListener('click', () => {
             this.closeDetail();
         })
-        pauseBtn.addEventListener('click', () => {
+        this._pauseBtn.addEventListener('click', () => {
             if (this._audio.isPlaying) {
                 this._audio.pause();
-                pauseBtn.innerHTML = `PLAY <img src="./img/play.png" alt="play">`
-                LPImg.style.animationPlayState = 'paused'
+                this.pauseMusicUI()
             } else {
-                this._audio.play();
-                pauseBtn.innerHTML = `PAUSE <img src="./img/pause.png" alt="pause">`;
-                LPImg.style.animationPlayState = 'running'
+                this.playMusicUI()
             }
-
+            // 클릭할 때 또 들어감
         })
+    }
+
+    pauseMusicUI() {
+        this._pauseBtn.innerHTML = `PLAY <img src="./img/play.png" alt="play">`
+        this._LPImg.style.animationPlayState = 'paused'
+    }
+    playMusicUI() {
+        this._pauseBtn.innerHTML = `PAUSE <img src="./img/pause.png" alt="pause">`;
+        this._LPImg.style.animationPlayState = 'running'
     }
 
     _setupEvents() {
@@ -292,7 +299,8 @@ class App {
             }, 1000)
 
             setTimeout(() => {
-                this.openDetail(item.object);
+                this.playMusicUI();
+                this.musicPlay(item.object);
                 item.object.rotation.y = Math.PI;
             }, 2000)
             break;
@@ -312,17 +320,17 @@ class App {
         <div>Genre: No track selected</div>`;
     }
 
-    openDetail(mesh) {
-        this.musicPlay(mesh);
-        this._trackDetial.classList.remove('hide')
-    }
-
     musicPlay(mesh) {
+        this._trackName.innerHTML = mesh.track;
+        this._trackDetial.classList.remove('hide');
+
         this._audioLoader.load(mesh.path, (buffer) => {
             const listener = new THREE.AudioListener();
             this._audio = new THREE.PositionalAudio(listener);
             this._audio.setBuffer(buffer);
-            if (!this._audio.isPlaying) this._audio.play();
+            if (!this._audio.isPlaying) {
+                this._audio.play();
+            }
         })
     }
 
