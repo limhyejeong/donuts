@@ -1,5 +1,6 @@
 import * as THREE from './build/three.module.js';
 import { OrbitControls } from "./examples/jsm/controls/OrbitControls.js"
+import { TransformControls } from "./examples/jsm/controls/TransformControls.js"
 import { Donut } from './Donut.js';
 import { PreventDragClick } from './PreventDragClick.js';
 
@@ -42,18 +43,18 @@ class App {
             1000
         );
 
-        camera.position.set(0, 7, 5);
+        camera.position.set(0, 6, 6);
         this._camera = camera;
     }
 
     _setupLight() {
-        const defaultLight = new THREE.DirectionalLight(0x111111, 1);
+        const defaultLight = new THREE.DirectionalLight(0x000000, 1);
         defaultLight.position.set(0, 5, 0);
         defaultLight.castShadow = true;
         defaultLight.shadow.mapSize.set(1024, 1024);
         defaultLight.shadow.radius = 10;
 
-        const directionalLight = new THREE.PointLight(0x000000, 0.5, 25);
+        const directionalLight = new THREE.PointLight(0x000000, 1, 25);
         directionalLight.position.set(0, 20, -10);
 
         this._pinkLight = new THREE.PointLight(0xe9cc83, 1, 80);
@@ -67,35 +68,71 @@ class App {
 
     _setupModel() {
         const donut1 = new Donut({
-            name: 'donut1', x: 2, y: 1, z: -2,
-            path: '/data/Squirm Worm.mp3',
-            track: 'On The Rocks',
+            name: 'donut1', x: -3, y: 1, z: -3,
+            path: '/data/Jane Street - TrackTribe.mp3',
+            track: 'Jane Street',
             num: 1, genre: 'Jazz/Blues',
             container: this._scene
         });
         const donut2 = new Donut({
-            name: 'donut2', x: -2, y: 1, z: -2,
-            path: '/data/Squirm Worm.mp3',
-            track: 'On The Rocks',
-            num: 1, genre: 'Jazz/Blues',
+            name: 'donut2', x: 0, y: 1, z: -3,
+            path: '/data/Ticklish - Quincas Moreira.mp3',
+            track: 'Ticklish',
+            num: 1, genre: 'Dance/Electronic',
             container: this._scene
         });
         const donut3 = new Donut({
-            name: 'donut3', x: 2, y: 1, z: 2,
-            path: '/data/Squirm Worm.mp3',
-            track: 'On The Rocks',
-            num: 1, genre: 'Jazz/Blues',
+            name: 'donut3', x: 3, y: 1, z: -3,
+            path: '/data/Organic Guitar House - Dyalla.mp3',
+            track: 'Organic Guitar House',
+            num: 1, genre: 'Dance/Electronic',
             container: this._scene
         });
         const donut4 = new Donut({
-            name: 'donut4', x: -2, y: 1, z: 2,
-            path: '/data/Squirm Worm.mp3',
-            track: 'On The Rocks',
-            num: 1, genre: 'Jazz/Blues',
+            name: 'donut4', x: -3, y: 1, z: 0,
+            path: '/data/Spooky Boop - Otis McDonald.mp3',
+            track: 'Spooky Boop',
+            num: 1, genre: 'R&B/Soul',
+            container: this._scene
+        });
+        const donut5 = new Donut({
+            name: 'donut5', x: 0, y: 1, z: 0,
+            path: '/data/Dusk til Dawn - TrackTribe.mp3',
+            track: 'Dusk til Dawn',
+            num: 1, genre: 'Rock',
+            container: this._scene
+        });
+        const donut6 = new Donut({
+            name: 'donut6', x: 3, y: 1, z: 0,
+            path: '/data/When Youre Not Looking - Nathan Moore.mp3',
+            track: 'When Youre Not Looking',
+            num: 1, genre: 'Alternative/Punk',
+            container: this._scene
+        });
+        const donut7 = new Donut({
+            name: 'donut7', x: -3, y: 1, z: 3,
+            path: '/data/Lonely Day - Telecasted.mp3',
+            track: 'Lonely Day',
+            num: 1, genre: 'Movie',
+            container: this._scene
+        });
+        const donut8 = new Donut({
+            name: 'donut7', x: 0, y: 1, z: 3,
+            path: '/data/Kind of a Party - Mini Vandals.mp3',
+            track: 'Kind of a Party',
+            num: 1, genre: 'R&B/Soul',
+            container: this._scene
+        });
+        const donut9 = new Donut({
+            name: 'donut9', x: 3, y: 1, z: 3,
+            path: '/data/Something You Could Never Own (Clean) - NEFFEX.mp3',
+            track: 'Something You Could Never Own',
+            num: 1, genre: 'Alternative/Punk',
             container: this._scene
         });
 
-        this._donuts = [donut1, donut2];
+
+        this._donuts = [donut1, donut2, donut3];
 
         // 바닥
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(100, 100),
@@ -108,13 +145,15 @@ class App {
     }
 
     _setupControls() {
-        this._orbitControls = new OrbitControls(this._camera, this._divContainer);
-        this._orbitControls.minDistance = 7;
-        this._orbitControls.maxDistance = 7;
-        this._orbitControls.minPolarAngle = Math.PI / 5;
-        this._orbitControls.maxPolarAngle = Math.PI / 5;
-        this._orbitControls.minAzimuthAngle = Math.PI * 2;
-        this._orbitControls.maxAzimuthAngle = Math.PI * 2;
+        this._controls = new OrbitControls(this._camera, this._divContainer);
+        // this._controls = new TransformControls(this._camera, this._divContainer);
+        this._controls.minDistance = 3;
+        this._controls.maxDistance = 10;
+        // this._controls.minPolarAngle = Math.PI / 5;
+        this._controls.maxPolarAngle = Math.PI / 2;
+        this._controls.minAzimuthAngle = Math.PI * 2;
+        this._controls.maxAzimuthAngle = Math.PI * 2;
+        this._controls.target.set(0, 1, 2)
     }
 
     _setupUI() {
@@ -233,7 +272,7 @@ class App {
                 );
 
                 gsap.to(
-                    this._orbitControls.target,
+                    this._controls.target,
                     {
                         duration: 1,
                         x: item.object.position.x,
@@ -296,16 +335,16 @@ class App {
             {
                 duration: 1,
                 x: 0,
-                y: 7,
-                z: 5
+                y: 6,
+                z: 6
             }
         );
         gsap.to(
-            this._orbitControls.target,
+            this._controls.target,
             {
                 duration: 1,
                 x: 0,
-                z: 0
+                z: 2
             }
         );
         gsap.to(
@@ -369,7 +408,7 @@ class App {
 
     update() {
         const delta = this._clock.getDelta();
-        this._orbitControls.update();
+        this._controls.update();
     }
 
     render() {

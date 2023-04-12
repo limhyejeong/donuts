@@ -22,10 +22,13 @@ body {
 nav {
   position: absolute;
   display: flex;
-  top: 0;
+  top: 30px;
   width: 100%;
   justify-content: center;
   z-index: 1;
+  font-size: 2rem;
+}
+.logo {
 }
 
 #webgl-container {
