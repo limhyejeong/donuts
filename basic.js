@@ -159,6 +159,9 @@ class App {
     _setupUI() {
         this._songInformation = document.querySelector('#song-information');
         this._trackInformation = this._songInformation.querySelector('.information')
+        const aboutBtn = document.querySelector('.aboutBtn');
+        const aboutPopupBg = document.querySelector('.aboutPopupBg')
+        const closePopup = document.querySelector('.closePopup')
 
         this._trackDetial = document.querySelector('#trackDetial');
         const backBtn = this._trackDetial.querySelector('.backBtn')
@@ -166,6 +169,13 @@ class App {
         this._LPImg = this._trackDetial.querySelector('.LPImg')
         this._trackName = this._trackDetial.querySelector('.trackName')
         this._LPImg.style.animationPlayState = 'running'
+
+        aboutBtn.addEventListener('click', () => {
+            aboutPopupBg.classList.remove('hide')
+        })
+        closePopup.addEventListener('click', () => {
+            aboutPopupBg.classList.add('hide')
+        })
 
         backBtn.addEventListener('click', () => {
             this.closeDetail();
