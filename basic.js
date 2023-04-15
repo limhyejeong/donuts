@@ -43,7 +43,12 @@ class App {
             1000
         );
 
-        camera.position.set(0, 6, 6);
+        if (786 > this._divContainer.clientWidth) {
+            this._defaultCameraPosition = { x: 0, y: 13, z: 3 };
+        } else {
+            this._defaultCameraPosition = { x: 0, y: 6, z: 6 };
+        }
+
         this._camera = camera;
     }
 
@@ -148,7 +153,7 @@ class App {
         this._controls = new OrbitControls(this._camera, this._divContainer);
         // this._controls = new TransformControls(this._camera, this._divContainer);
         this._controls.minDistance = 3;
-        this._controls.maxDistance = 10;
+        this._controls.maxDistance = 13;
         // this._controls.minPolarAngle = Math.PI / 5;
         this._controls.maxPolarAngle = Math.PI / 2;
         this._controls.minAzimuthAngle = Math.PI * 2;
@@ -185,8 +190,8 @@ class App {
                 this._audio.pause();
                 this.pauseMusicUI()
             } else {
-                this.playMusicUI();
                 this._audio.play()
+                this.playMusicUI();
             }
             // 클릭할 때 또 들어감
         })
@@ -197,6 +202,7 @@ class App {
         this._LPImg.style.animationPlayState = 'paused'
     }
     playMusicUI() {
+        this._trackDetial.classList.remove('hide');
         this._pauseBtn.innerHTML = `PAUSE <img src="./img/pause.png" alt="pause">`;
         this._LPImg.style.animationPlayState = 'running'
     }
@@ -279,6 +285,8 @@ class App {
             );
 
             setTimeout(() => {
+                this.musicPlay(item.object);
+
                 gsap.to(
                     this._camera.position,
                     {
@@ -294,6 +302,7 @@ class App {
                     {
                         duration: 1,
                         x: item.object.position.x,
+                        y: 1,
                         z: item.object.position.z,
                     }
                 );
@@ -311,30 +320,14 @@ class App {
 
             setTimeout(() => {
                 this.playMusicUI(item.object);
-                this.musicPlay(item.object);
                 item.object.rotation.y = Math.PI;
             }, 2000)
             break;
         }
     }
 
-    setInformation(mesh) {
-        this._trackInformation.innerHTML = `
-        <div>Track: ${mesh.track}</div>
-        <div>No: 0${mesh.num}/09</div>
-        <div>Genre: ${mesh.genre}</div>`;
-    }
-    outInformation() {
-        this._trackInformation.innerHTML = `
-        <div>Track: No track selected</div>
-        <div>No: 00/09</div>
-        <div>Genre: No track selected</div>`;
-    }
-
     musicPlay(mesh) {
         this._trackName.innerHTML = mesh.track;
-        this._trackDetial.classList.remove('hide');
-
         this._audioLoader.load(mesh.path, (buffer) => {
             const listener = new THREE.AudioListener();
             this._audio = new THREE.PositionalAudio(listener);
@@ -353,9 +346,9 @@ class App {
             this._camera.position,
             {
                 duration: 1,
-                x: 0,
-                y: 6,
-                z: 6
+                x: this._defaultCameraPosition.x,
+                y: this._defaultCameraPosition.y,
+                z: this._defaultCameraPosition.z
             }
         );
         gsap.to(
@@ -363,7 +356,8 @@ class App {
             {
                 duration: 1,
                 x: 0,
-                z: 2
+                y: 1,
+                z: 2,
             }
         );
         gsap.to(
@@ -378,8 +372,22 @@ class App {
 
         setTimeout(() => {
             this._clickedDonut = false;
-            this.outInformation()
+            this.outInformation();
+            // console.log(this._camera.position)
         }, 1000);
+    }
+
+    setInformation(mesh) {
+        this._trackInformation.innerHTML = `
+        <div>Track: ${mesh.track}</div>
+        <div>No: 0${mesh.num}/09</div>
+        <div>Genre: ${mesh.genre}</div>`;
+    }
+    outInformation() {
+        this._trackInformation.innerHTML = `
+        <div>Track: No track selected</div>
+        <div>No: 00/09</div>
+        <div>Genre: No track selected</div>`;
     }
 
     turnOn(donut) {
@@ -441,6 +449,7 @@ class App {
         const width = this._divContainer.clientWidth;
         const height = this._divContainer.clientHeight;
 
+        this._camera.position.set(this._defaultCameraPosition.x, this._defaultCameraPosition.y, this._defaultCameraPosition.z);
         this._camera.aspect = width / height;
         this._camera.updateProjectionMatrix();
 

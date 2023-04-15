@@ -16,6 +16,9 @@ body {
   font-family: "Righteous", cursive;
   text-transform: uppercase;
   color: var(--pointColor);
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 p {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -26,7 +29,7 @@ p {
 }
 figcaption {
   font-size: 0.7rem;
-  opacity: 0.5;
+  /* opacity: 0.5; */
   text-align: right;
 }
 
@@ -139,6 +142,7 @@ a {
   width: 100%;
   height: 100vh;
   z-index: 2;
+  overflow: hidden;
 }
 #trackDetial .backBtn {
   position: absolute;
@@ -193,5 +197,35 @@ a {
   }
   to {
     transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@media (max-width: 786px) {
+  nav ul {
+    width: 100%;
+    justify-content: space-between;
+  }
+  nav ul li {
+    margin: 0 10px;
+  }
+  #trackDetial .backBtn {
+    left: 0;
+  }
+  #trackDetial .trackName {
+    width: 100%;
+    font-size: 3rem;
+    line-height: 3rem;
+  }
+  .aboutPopupBg {
+    width: 100%;
+  }
+  .aboutPopup {
+    width: 100%;
+    margin: 0 1px;
+    padding: 15px;
+  }
+  .aboutPopup .closePopup {
+    right: -0px;
+    top: -0px;
   }
 }
