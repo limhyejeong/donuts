@@ -69,7 +69,7 @@ class App {
     _setupModel() {
         const donut1 = new Donut({
             name: 'donut1', x: -3, y: 1, z: -3,
-            path: '/data/Jane Street - TrackTribe.mp3',
+            path: '/data/Jane_Street.mp3',
             track: 'Jane Street',
             num: 1, genre: 'Jazz/Blues',
             container: this._scene
@@ -78,56 +78,56 @@ class App {
             name: 'donut2', x: 0, y: 1, z: -3,
             path: '/data/Ticklish - Quincas Moreira.mp3',
             track: 'Ticklish',
-            num: 1, genre: 'Dance/Electronic',
+            num: 2, genre: 'Dance/Electronic',
             container: this._scene
         });
         const donut3 = new Donut({
             name: 'donut3', x: 3, y: 1, z: -3,
             path: '/data/Organic Guitar House - Dyalla.mp3',
             track: 'Organic Guitar House',
-            num: 1, genre: 'Dance/Electronic',
+            num: 3, genre: 'Dance/Electronic',
             container: this._scene
         });
         const donut4 = new Donut({
             name: 'donut4', x: -3, y: 1, z: 0,
             path: '/data/Spooky Boop - Otis McDonald.mp3',
             track: 'Spooky Boop',
-            num: 1, genre: 'R&B/Soul',
+            num: 4, genre: 'R&B/Soul',
             container: this._scene
         });
         const donut5 = new Donut({
             name: 'donut5', x: 0, y: 1, z: 0,
-            path: '/data/Dusk til Dawn - TrackTribe.mp3',
+            path: './data/Dusk_til_Dawn.mp3',
             track: 'Dusk til Dawn',
-            num: 1, genre: 'Rock',
+            num: 5, genre: 'Rock',
             container: this._scene
         });
         const donut6 = new Donut({
             name: 'donut6', x: 3, y: 1, z: 0,
             path: '/data/When Youre Not Looking - Nathan Moore.mp3',
             track: 'When Youre Not Looking',
-            num: 1, genre: 'Alternative/Punk',
+            num: 6, genre: 'Alternative/Punk',
             container: this._scene
         });
         const donut7 = new Donut({
             name: 'donut7', x: -3, y: 1, z: 3,
             path: '/data/Lonely Day - Telecasted.mp3',
             track: 'Lonely Day',
-            num: 1, genre: 'Movie',
+            num: 7, genre: 'Movie',
             container: this._scene
         });
         const donut8 = new Donut({
             name: 'donut7', x: 0, y: 1, z: 3,
             path: '/data/Kind of a Party - Mini Vandals.mp3',
             track: 'Kind of a Party',
-            num: 1, genre: 'R&B/Soul',
+            num: 8, genre: 'R&B/Soul',
             container: this._scene
         });
         const donut9 = new Donut({
             name: 'donut9', x: 3, y: 1, z: 3,
-            path: '/data/Something You Could Never Own (Clean) - NEFFEX.mp3',
+            path: '/data/Something_You_Could_Never_Own_(Clean)_- NEFFEX.mp3',
             track: 'Something You Could Never Own',
-            num: 1, genre: 'Alternative/Punk',
+            num: 9, genre: 'Alternative/Punk',
             container: this._scene
         });
 
@@ -310,7 +310,7 @@ class App {
     setInformation(mesh) {
         this._trackInformation.innerHTML = `
         <div>Track: ${mesh.track}</div>
-        <div>No: ${mesh.num}/31</div>
+        <div>No: 0${mesh.num}/09</div>
         <div>Genre: ${mesh.genre}</div>`;
     }
     outInformation() {
