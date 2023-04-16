@@ -1,6 +1,5 @@
-import * as THREE from './build/three.module.js';
-import { OrbitControls } from "./examples/jsm/controls/OrbitControls.js"
-import { TransformControls } from "./examples/jsm/controls/TransformControls.js"
+import * as THREE from 'three';
+import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 import { Donut } from './Donut.js';
 import { PreventDragClick } from './PreventDragClick.js';
 
@@ -448,6 +447,12 @@ class App {
     resize() {
         const width = this._divContainer.clientWidth;
         const height = this._divContainer.clientHeight;
+
+        if (786 > this._divContainer.clientWidth) {
+            this._defaultCameraPosition = { x: 0, y: 13, z: 3 };
+        } else {
+            this._defaultCameraPosition = { x: 0, y: 6, z: 6 };
+        }
 
         this._camera.position.set(this._defaultCameraPosition.x, this._defaultCameraPosition.y, this._defaultCameraPosition.z);
         this._camera.aspect = width / height;
